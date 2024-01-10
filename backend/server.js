@@ -7,9 +7,30 @@ const app = express();
 const port = 3001;
 
 app.use(cors());
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+// Add Expense endpoint
+app.post("/api/add-expense", (req, res) => {
+  const { amountSpent, expenseDescription, expenseCategory } = req.body;
+
+  const query =
+    "INSERT INTO expenses (amount_spent, description, category) VALUES (?, ?, ?)";
+  db.query(
+    query,
+    [amountSpent, expenseDescription, expenseCategory],
+    (err, results) => {
+      if (err) {
+        console.error("Error inserting data into MySQL:", err);
+        res.status(500).json({ error: "Internal Server Error" });
+        return;
+      }
+
+      console.log("Data inserted into MySQL:", results);
+      res.status(200).json({ success: true });
+    }
+  );
+});
 
 // Signup endpoint
 app.post("/signup", (req, res) => {

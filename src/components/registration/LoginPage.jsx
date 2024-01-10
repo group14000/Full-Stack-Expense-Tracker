@@ -81,7 +81,7 @@ const LoginPage = () => {
 
         <p className="mt-4">
           New User?{" "}
-          <Link to="/" className="text-blue-500">
+          <Link to="/signup" className="text-blue-500">
             Sign Up
           </Link>
         </p>
