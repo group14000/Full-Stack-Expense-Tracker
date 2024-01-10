@@ -1,5 +1,11 @@
+import SignupPage from "./components/registration/SignupPage";
+
 const App = () => {
-  return <div></div>;
+  return (
+    <div>
+      <SignupPage />
+    </div>
+  );
 };
 
 export default App;
