@@ -32,6 +32,22 @@ app.post("/api/add-expense", (req, res) => {
   );
 });
 
+// GET endpoint to fetch expenses
+app.get("/api/get-expenses", (req, res) => {
+  const query = "SELECT * FROM expenses";
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching expenses from MySQL:", err);
+      res.status(500).json({ error: "Internal Server Error" });
+      return;
+    }
+
+    console.log("Data fetched from MySQL:", results);
+    res.status(200).json(results);
+  });
+});
+
 // Signup endpoint
 app.post("/signup", (req, res) => {
   const { name, email, password } = req.body;
