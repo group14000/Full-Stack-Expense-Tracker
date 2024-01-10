@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const SignupPage = () => {
   // State variables
@@ -107,9 +108,10 @@ const SignupPage = () => {
         {/* Login link */}
         <p className="mt-4">
           Already have an account?{" "}
-          <a href="/login" className="text-blue-500">
+          <Link to="/login" className="text-blue-500">
+            {" "}
             Login
-          </a>
+          </Link>
         </p>
       </div>
     </div>
