@@ -1,13 +1,18 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+// Import necessary dependencies
+import { useUser } from "../context/UserContext";
+import { Link, useNavigate } from "react-router-dom";
 
-const LoginPage = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState(null);
-  const [loginSuccess, setLoginSuccess] = useState(false);
+// LoginPage component
+const LoginPage = ({ onLogin }) => {
+  const { state, setField, resetForm } = useUser();
+  const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setField(name, value);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
@@ -16,73 +21,68 @@ const LoginPage = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({
+          email: state.email,
+          password: state.password,
+        }),
       });
 
-      const data = await response.json();
-
-      if (response.status === 200) {
-        console.log("Login successful");
-        setLoginSuccess(true); // Set login success state
-        // Redirect or perform other actions after successful login
-      } else if (response.status === 401) {
-        setError("Invalid credentials");
+      if (response.ok) {
+        console.log("Login successful!");
+        resetForm();
+        onLogin(); // Call the login handler to set the login state
+        navigate("/expenses"); // Redirect to the protected route
       } else {
-        setError(data.message || "Something went wrong");
+        const responseData = await response.json();
+        alert(`Login failed: ${responseData.error}`);
       }
     } catch (error) {
-      setError("Network error. Please try again.");
+      console.error("Error during login:", error.message);
+      alert("Login failed. Please try again.");
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded shadow-md w-96">
-        <h2 className="text-2xl font-semibold mb-4">Login</h2>
+    <div className="max-w-md mx-auto mt-16 p-6 bg-white rounded-md shadow-md">
+      <h2 className="text-2xl font-bold mb-4">Login</h2>
+      <form onSubmit={handleSubmit}>
+        <label className="block mb-2">
+          Email:
+          <input
+            type="email"
+            name="email"
+            value={state.email}
+            onChange={handleChange}
+            required
+            className="w-full border p-2 rounded-md"
+          />
+        </label>
 
-        {/* Display login success message */}
-        {loginSuccess && (
-          <p className="text-green-500 mb-4">
-            Login successful. Redirecting...
-          </p>
-        )}
+        <label className="block mb-2">
+          Password:
+          <input
+            type="password"
+            name="password"
+            value={state.password}
+            onChange={handleChange}
+            required
+            className="w-full border p-2 rounded-md"
+          />
+        </label>
 
-        <form onSubmit={handleLogin}>
-          <div className="mb-4">
-            <label className="block text-gray-600">Email:</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full border border-gray-300 p-2 rounded"
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-600">Password:</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full border border-gray-300 p-2 rounded"
-            />
-          </div>
-          <div>
-            <button
-              type="submit"
-              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-            >
-              Login
-            </button>
-          </div>
-        </form>
+        <button
+          type="submit"
+          className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-700"
+        >
+          Login
+        </button>
+      </form>
 
-        {/* Display error message */}
-        {error && <p className="text-red-500">{error}</p>}
-
-        <p className="mt-4">
+      <div className="text-center mt-4">
+        <p>
           New User?{" "}
-          <Link to="/signup" className="text-blue-500">
-            Sign Up
+          <Link to="/signup" className="text-blue-500 underline">
+            Signup
           </Link>
         </p>
       </div>

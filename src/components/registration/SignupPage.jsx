@@ -1,115 +1,109 @@
-import { useState } from "react";
+import { useUser } from "../context/UserContext";
 import { Link } from "react-router-dom";
 
 const SignupPage = () => {
-  // State variables
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState(null);
+  const { state, setField, resetForm } = useUser();
 
-  // Handle form submission
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setField(name, value);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      // Make a POST request to the backend API
       const response = await fetch("http://localhost:3001/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({
+          name: state.name,
+          email: state.email,
+          password: state.password,
+          confirmPassword: state.confirmPassword,
+        }),
       });
 
-      // Parse the response data
-      const data = await response.json();
-
-      // Check the response status
-      if (response.status === 201) {
-        console.log("User created successfully");
-
-        // Clear input fields after successful signup
-        setName("");
-        setEmail("");
-        setPassword("");
-        setConfirmPassword("");
-
-        // Redirect or perform other actions after successful signup
-      } else if (response.status === 409) {
-        setError("User already exists");
+      if (response.ok) {
+        console.log("Signup successful!");
+        resetForm();
+        alert("Signup successful!");
       } else {
-        setError(data.message || "Something went wrong");
+        const responseData = await response.json();
+        alert(`Signup failed: ${responseData.error}`);
       }
     } catch (error) {
-      setError("Network error. Please try again.");
+      console.error("Error during signup:", error.message);
+      alert("Signup failed. Please try again.");
     }
   };
 
-  // JSX for the component
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded shadow-md w-96">
-        <h2 className="text-2xl font-semibold mb-4">Signup</h2>
-        <form onSubmit={handleSubmit}>
-          {/* Input fields */}
-          <div className="mb-4">
-            <label className="block text-gray-600">Name:</label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full border border-gray-300 p-2 rounded"
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-600">Email:</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full border border-gray-300 p-2 rounded"
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-600">Password:</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full border border-gray-300 p-2 rounded"
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-600">Confirm Password:</label>
-            <input
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full border border-gray-300 p-2 rounded"
-            />
-          </div>
+    <div className="max-w-md mx-auto mt-16 p-6 bg-white rounded-md shadow-md">
+      <h2 className="text-2xl font-bold mb-4">Signup</h2>
+      <form onSubmit={handleSubmit}>
+        <label className="block mb-2">
+          Name:
+          <input
+            type="text"
+            name="name"
+            value={state.name}
+            onChange={handleChange}
+            required
+            className="w-full border p-2 rounded-md"
+          />
+        </label>
 
-          {/* Submit button */}
-          <div>
-            <button
-              type="submit"
-              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-            >
-              Submit
-            </button>
-          </div>
-        </form>
+        <label className="block mb-2">
+          Email:
+          <input
+            type="email"
+            name="email"
+            value={state.email}
+            onChange={handleChange}
+            required
+            className="w-full border p-2 rounded-md"
+          />
+        </label>
 
-        {/* Error message */}
-        {error && <p className="text-red-500">{error}</p>}
+        <label className="block mb-2">
+          Password:
+          <input
+            type="password"
+            name="password"
+            value={state.password}
+            onChange={handleChange}
+            required
+            className="w-full border p-2 rounded-md"
+          />
+        </label>
 
-        {/* Login link */}
-        <p className="mt-4">
-          Already have an account?{" "}
-          <Link to="/login" className="text-blue-500">
-            {" "}
+        <label className="block mb-2">
+          Confirm Password:
+          <input
+            type="password"
+            name="confirmPassword"
+            value={state.confirmPassword}
+            onChange={handleChange}
+            required
+            className="w-full border p-2 rounded-md"
+          />
+        </label>
+
+        <button
+          type="submit"
+          className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-700"
+        >
+          Sign Up
+        </button>
+      </form>
+
+      <div className="text-center mt-4">
+        <p>
+          Already Have an account?{" "}
+          <Link to="/login" className="text-blue-500 underline">
             Login
           </Link>
         </p>
