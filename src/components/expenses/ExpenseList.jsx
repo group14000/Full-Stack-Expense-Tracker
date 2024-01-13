@@ -32,18 +32,28 @@ const ExpenseList = () => {
       .then((data) => {
         if (!data.success) {
           console.error("Error deleting expense:", data.error);
-          // Revert the UI update if there's an error on the server
-          setExpenses((prevExpenses) =>
-            prevExpenses.filter((expense) => expense.id !== expenseId)
-          );
+          // Fetch expenses again to revert the optimistic update
+          fetch("http://localhost:3001/api/get-expenses")
+            .then((response) => response.json())
+            .then((data) => {
+              setExpenses(data);
+            })
+            .catch((error) => {
+              console.error("Error fetching expenses:", error);
+            });
         }
       })
       .catch((error) => {
         console.error("Error deleting expense:", error);
-        // Revert the UI update in case of a network error
-        setExpenses((prevExpenses) =>
-          prevExpenses.filter((expense) => expense.id !== expenseId)
-        );
+        // Fetch expenses again to revert the optimistic update
+        fetch("http://localhost:3001/api/get-expenses")
+          .then((response) => response.json())
+          .then((data) => {
+            setExpenses(data);
+          })
+          .catch((error) => {
+            console.error("Error fetching expenses:", error);
+          });
       });
   };
 
@@ -58,13 +68,13 @@ const ExpenseList = () => {
             {expenses.map((expense) => (
               <li key={expense.id} className="bg-gray-100 rounded-md p-4 mb-4">
                 <p className="text-lg font-semibold text-gray-800 mb-2">
-                  {expense.description}
+                  {expense.expenseDescription}
                 </p>
                 <p className="text-base text-gray-600 mb-2">
-                  ${expense.amount_spent}
+                  ${expense.amountSpent}
                 </p>
                 <p className="text-base text-gray-600 mb-2">
-                  {expense.category}
+                  {expense.expenseCategory}
                 </p>
                 <button
                   onClick={() => handleDeleteExpense(expense.id)}

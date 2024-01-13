@@ -1,10 +1,12 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const user = require("./components/user");
+const expenseRouter = require("./components/expense");
 require("dotenv").config();
 
 const app = express();
 app.use(bodyParser.json());
+app.use("/api", expenseRouter);
 
 app.post("/signup", async (req, res) => {
   try {

@@ -1,17 +1,19 @@
 import { useState } from "react";
 
 const AddExpensesForm = () => {
-  // State variables to store form data
   const [amountSpent, setAmountSpent] = useState("");
   const [expenseDescription, setExpenseDescription] = useState("");
   const [expenseCategory, setExpenseCategory] = useState("");
+  const [expenseDate, setExpenseDate] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  // Function to handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    setLoading(true);
+
     try {
-      // Make a POST request to the backend
       const response = await fetch("http://localhost:3001/api/add-expense", {
         method: "POST",
         headers: {
@@ -21,21 +23,28 @@ const AddExpensesForm = () => {
           amountSpent,
           expenseDescription,
           expenseCategory,
+          expenseDate,
         }),
       });
 
-      // Check if the request was successful
       if (response.ok) {
         console.log("Expense added successfully");
-        // Reset form fields
+
         setAmountSpent("");
         setExpenseDescription("");
         setExpenseCategory("");
+        setExpenseDate("");
+
+        alert("Expense added successfully!");
       } else {
-        console.error("Error adding expense:", response.statusText);
+        const errorText = await response.text();
+        setError(`Error adding expense: ${errorText}`);
       }
     } catch (error) {
       console.error("Error adding expense:", error.message);
+      setError(`Error adding expense: ${error.message}`);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -93,16 +102,38 @@ const AddExpensesForm = () => {
           <option value="Food">Food</option>
           <option value="Petrol">Petrol</option>
           <option value="Salary">Salary</option>
-          {/* Add more categories as needed */}
         </select>
+      </div>
+
+      <div className="mb-4">
+        <label
+          className="block text-gray-700 text-sm font-bold mb-2"
+          htmlFor="expenseDate"
+        >
+          Expense Date:
+        </label>
+        <input
+          className="w-full p-2 border rounded-md"
+          type="date"
+          id="expenseDate"
+          value={expenseDate}
+          onChange={(e) => setExpenseDate(e.target.value)}
+        />
+      </div>
+
+      <div className="mb-4">
+        {error && <div className="text-red-500">{error}</div>}
       </div>
 
       <div className="mb-4">
         <button
           type="submit"
-          className="w-full bg-blue-500 text-white p-3 rounded-md hover:bg-blue-600 transition duration-300"
+          className={`w-full bg-blue-500 text-white p-3 rounded-md hover:bg-blue-600 transition duration-300 ${
+            loading && "opacity-50 cursor-not-allowed"
+          }`}
+          disabled={loading}
         >
-          Submit
+          {loading ? "Submitting..." : "Submit"}
         </button>
       </div>
     </form>
