@@ -8,6 +8,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Footer from "./components/footer/Footer";
 import HomePage from "./components/homepage/HomePage";
 import RazorpayButton from "./components/payment/RazorpayButton";
+import ResetPasswordForm from "./components/registration/ResetPasswordForm";
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -22,6 +23,7 @@ const App = () => {
       <Routes>
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
+        <Route path="/forgot/password" element={<ResetPasswordForm />} />
         {isLoggedIn ? (
           <>
             <Route path="/add-expenses" element={<AddExpensesForm />} />

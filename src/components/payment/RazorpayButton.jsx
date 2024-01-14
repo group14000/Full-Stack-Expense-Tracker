@@ -1,29 +1,38 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 function RazorpayButton() {
+  // State variables
   const [amount, setAmount] = useState("");
-  const [paymentStatus, setPaymentStatus] = useState("pending");
+  const [paymentStatus, setPaymentStatus] = useState(
+    localStorage.getItem("paymentStatus") || "pending"
+  );
 
+  // useEffect to update local storage when paymentStatus changes
+  useEffect(() => {
+    localStorage.setItem("paymentStatus", paymentStatus);
+  }, [paymentStatus]);
+
+  // Function to handle the Buy Now button click
   const handleBuyNow = async () => {
     try {
-      // Make sure amount is a valid number
+      // Validate amount
       if (!amount || isNaN(amount)) {
         alert("Please enter a valid amount.");
         return;
       }
 
-      // Make a POST request to your Node.js backend to create a payment order
+      // Make a POST request to create a payment order
       const response = await fetch("http://localhost:3001/payments", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ amount }), // Ensure 'amount' is being set correctly
+        body: JSON.stringify({ amount }),
       });
 
       const result = await response.json();
 
-      // Redirect to the Razorpay checkout page using the received order details
+      // Redirect to Razorpay checkout page
       const { order } = result;
       const options = {
         key: "rzp_test_s43txngfMkfE7D",
@@ -35,7 +44,7 @@ function RazorpayButton() {
         handler: function (response) {
           setPaymentStatus("success");
           alert("Payment successful!");
-          // You can handle the payment success logic here
+          // Handle payment success logic here
         },
       };
 
@@ -48,6 +57,7 @@ function RazorpayButton() {
     }
   };
 
+  // JSX structure for the component
   return (
     <div className="container mx-auto my-8 p-8 bg-gray-100 rounded-md shadow-md">
       <h1 className="text-4xl font-bold mb-4">Your Online Store</h1>
