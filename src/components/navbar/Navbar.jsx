@@ -29,6 +29,11 @@ const Navbar = () => {
     <nav className="bg-gray-800 p-4">
       {/* Navigation links */}
       <ul className="flex justify-center items-center space-x-4 text-white">
+      <li>
+          <Link to="*" className="hover:text-gray-300">
+            Home
+          </Link>
+        </li>
         <li>
           <Link to="/expenses" className="hover:text-gray-300">
             Expenses
