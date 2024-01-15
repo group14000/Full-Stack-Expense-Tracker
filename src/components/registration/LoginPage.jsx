@@ -76,11 +76,6 @@ const LoginPage = ({ onLogin }) => {
         >
           Login
         </button>
-        <div className="text-center mt-4">
-          <Link to="/forgot/password" className="text-blue-500 underline">
-            Forgot Password?
-          </Link>
-        </div>
       </form>
 
       <div className="text-center mt-4">

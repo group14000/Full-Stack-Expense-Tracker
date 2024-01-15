@@ -9,7 +9,7 @@ const HomePage = () => {
         <div className="mb-6 relative">
           {/* Add your expense-related images here */}
           <img
-            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR9fZhxMXD3Ukl_PIKgi3Blll0EIc6eST0aQQ&usqp=CAU" // Replace with your expense-related image URL
+            src="https://plus.unsplash.com/premium_photo-1680363254554-d1c63ad8d33d?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTd8fGV4cGVuc2VzfGVufDB8fDB8fHww" // Replace with your expense-related image URL
             alt="Expense Image"
             className="w-full h-64 object-cover rounded"
             style={{ background: "transparent" }}
